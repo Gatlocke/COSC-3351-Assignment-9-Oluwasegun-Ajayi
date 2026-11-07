@@ -1,0 +1,43 @@
+@baseUrl = http://localhost:3000
+
+### 1. Create an item — expected 201 Created
+# @name createItem
+POST {{baseUrl}}/api/items
+Content-Type: application/json
+
+{
+  "title": "Review database-backed endpoints",
+  "completed": false
+}
+
+### 2. Retrieve the collection — expected 200 OK
+GET {{baseUrl}}/api/items
+
+### 3. Retrieve the new item — expected 200 OK
+GET {{baseUrl}}/api/items/{{createItem.response.body.$.id}}
+
+### 4. Update the item — expected 200 OK, same ID
+PUT {{baseUrl}}/api/items/{{createItem.response.body.$.id}}
+Content-Type: application/json
+
+{
+  "title": "Finish database-backed endpoints",
+  "completed": true
+}
+
+### 5. Stop/restart the API, then send this request — same saved item, 200 OK
+GET {{baseUrl}}/api/items/{{createItem.response.body.$.id}}
+
+### 6. Permanently delete the item — expected 200 OK
+DELETE {{baseUrl}}/api/items/{{createItem.response.body.$.id}}
+
+### 7. Confirm deletion — expected 404 Not Found
+GET {{baseUrl}}/api/items/{{createItem.response.body.$.id}}
+
+### 8. Reject a blank title — expected 400 Bad Request
+POST {{baseUrl}}/api/items
+Content-Type: application/json
+
+{
+  "title": "   "
+}
